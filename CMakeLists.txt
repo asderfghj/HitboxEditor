@@ -21,6 +21,13 @@ endif()
 
 add_executable(hitboxEditor WIN32
 	src/main.cpp
+	src/Headers.h
+	src/Application.cpp
+	src/Application.h
+	src/Frame.cpp
+	src/Frame.h
+	src/ImageTab.cpp
+	src/ImageTab.h
 )
 
 if(WIN32)
