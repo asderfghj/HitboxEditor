@@ -18,7 +18,16 @@ Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, 
 	Connect(fileMenu->Append(wxID_ANY, _T("&Quit"))->GetId(), wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&Frame::OnQuit);
 	SetMenuBar(menuBar);
 
+	log_textctrl = new wxTextCtrl(this, -1, wxEmptyString, wxPoint(0, 250), wxSize(700, 100), wxTE_MULTILINE);
 
+	logger = new wxLogTextCtrl(log_textctrl);
+	logger->SetActiveTarget(logger);
+
+	notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP);
+	imageTab = new ImageTab(this, notebook);
+	notebook->AddPage(imageTab, _("Images"));
+
+	sizer->Add(notebook, 1, wxEXPAND | wxALL, 0);
 	SetSizerAndFit(sizer);
 }
 

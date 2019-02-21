@@ -7,15 +7,23 @@
 #include <memory>
 
 #include <wx/wx.h>
-#include <wx/dcbuffer.h>
-#include <wx/image.h>
 #include <wx/notebook.h>
+#include <wx/statbmp.h>
+#include <wx/filename.h>
+#include <wx/textctrl.h>
+#include <wx/brush.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
+#include <wx/dcbuffer.h>
+
 
 //internal files
 
+#include "Image.h"
 #include "Application.h"
 #include "Frame.h"
 #include "ImageTab.h"
+
 
 
 #endif // !HEADERS_H_

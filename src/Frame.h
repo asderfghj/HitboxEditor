@@ -1,3 +1,6 @@
+#ifndef FRAME_H_
+#define FRAME_H_
+
 #include "Headers.h"
 
 class ImageTab;
@@ -12,8 +15,8 @@ class Frame : public wxFrame
 	wxMenuBar* menuBar;
 	wxMenu* fileMenu;
 	
-
-
+	wxTextCtrl* log_textctrl;
+	wxLogTextCtrl* logger;
 
 	public:
 		Frame();
@@ -26,3 +29,5 @@ class Frame : public wxFrame
 		void OnOpen(wxCommandEvent& event);
 
 };
+
+#endif // !FRAME_H_

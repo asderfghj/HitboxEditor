@@ -28,6 +28,8 @@ add_executable(hitboxEditor WIN32
 	src/Frame.h
 	src/ImageTab.cpp
 	src/ImageTab.h
+	src/Image.cpp
+	src/Image.h
 )
 
 if(WIN32)
