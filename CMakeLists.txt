@@ -30,6 +30,10 @@ add_executable(hitboxEditor WIN32
 	src/ImageTab.h
 	src/Image.cpp
 	src/Image.h
+	src/HitboxTab.cpp
+	src/HitboxTab.h
+	src/ImagesContainer.cpp
+	src/ImagesContainer.h
 )
 
 if(WIN32)
@@ -38,5 +42,5 @@ else()
 	target_link_libraries(hitboxEditor ${wxWidgets_LIBRARIES})
 endif()
 
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MD")
 

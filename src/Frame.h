@@ -4,11 +4,13 @@
 #include "Headers.h"
 
 class ImageTab;
+class HitboxTab;
 
 class Frame : public wxFrame
 {
 	wxNotebook* notebook;
 	ImageTab* imageTab;
+	HitboxTab* hitboxTab;
 
 	wxString filePath;
 
@@ -17,6 +19,8 @@ class Frame : public wxFrame
 	
 	wxTextCtrl* log_textctrl;
 	wxLogTextCtrl* logger;
+
+	ImagesContainer* imagesContainer;
 
 	public:
 		Frame();
@@ -27,6 +31,7 @@ class Frame : public wxFrame
 		void OnSaveAs(wxCommandEvent& event);
 		void OnReopen(wxCommandEvent& event);
 		void OnOpen(wxCommandEvent& event);
+		ImagesContainer* getImagesContainer();
 
 };
 

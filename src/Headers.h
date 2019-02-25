@@ -15,15 +15,16 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 #include <wx/dcbuffer.h>
+#include <wx/spinctrl.h>
 
 
 //internal files
-
 #include "Image.h"
+#include "ImagesContainer.h"
 #include "Application.h"
 #include "Frame.h"
 #include "ImageTab.h"
-
+#include "HitboxTab.h"
 
 
 #endif // !HEADERS_H_

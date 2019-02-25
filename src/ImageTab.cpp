@@ -11,10 +11,7 @@ ImageTab::ImageTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, wx
 	Connect(imagesbox->GetId(), wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&ImageTab::onListBoxClicked);
 	imageContainer = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SUNKEN);
 
-	/*wxArrayString testArray;
-	testArray.Add("test");
 
-	imagesbox->InsertItems(testArray, 0);*/
 
 	addButton = new wxButton(this, wxID_ANY, _("Add"));
 	Connect(addButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ImageTab::onAddClicked);
@@ -54,17 +51,8 @@ void ImageTab::resizeContainer()
 
 void ImageTab::onRemoveClicked(wxCommandEvent& event)
 {
-
-	for (int i = 0; i < images.size(); i++)
-	{
-		if (images[i]->name == imagesbox->GetStringSelection())
-		{
-			images.erase(images.begin() + i);
-			imagesbox->Delete(imagesbox->GetSelection());
-			break;
-		}
-	}
-
+	parent->getImagesContainer()->removeImage(imagesbox->GetStringSelection());
+	imagesbox->Delete(imagesbox->GetSelection());
 }
 
 void ImageTab::onAddClicked(wxCommandEvent& event)
@@ -74,9 +62,6 @@ void ImageTab::onAddClicked(wxCommandEvent& event)
 	wxFileDialog* openDialog = NULL;
 
 	openDialog = new wxFileDialog(this, _("Choose an image to open"), wxEmptyString, wxEmptyString, _("Image files (*.png, *.jpg)|*.png;*.jpg"), wxFD_OPEN, wxDefaultPosition);
-
-	
-	
 
 
 	if (openDialog->ShowModal() == wxID_OK)
@@ -91,40 +76,21 @@ void ImageTab::onAddClicked(wxCommandEvent& event)
 		return;
 	}
 	
-	for (int i = 0; i < images.size(); i++)
+	if (parent->getImagesContainer()->checkForImage(path))
 	{
-		if (images[i]->path == path)
-		{
-			return;
-		}
+		return;
 	}
-
 
 	imageInfo = new Image(path);
-	images.push_back(std::shared_ptr<Image>(imageInfo));
-	wxArrayString infoToPush;
-	infoToPush.Add(imageInfo->name);
-	imagesbox->InsertItems(infoToPush, images.size() - 1);
-}
-
-Image* ImageTab::tryGetImage(wxString name)
-{
-	for (int i = 0; i < images.size(); i++)
-	{
-		if (images[i]->name == name)
-		{
-			return images[i].get();
-		}
-	}
-
-	return NULL;
+	parent->getImagesContainer()->addImage(std::shared_ptr<Image>(imageInfo));
+	imagesbox->Append(imageInfo->name);
 }
 
 Image* ImageTab::getImage(wxString name)
 {
 	Image* returnImage = NULL;
 
-	returnImage = tryGetImage(name);
+	returnImage = parent->getImagesContainer()->getImage(name);
 
 	if (returnImage == NULL)
 	{

@@ -10,7 +10,6 @@ class ImageTab : public wxPanel
 	wxStaticBitmap* image;
 	wxButton* addButton;
 	wxButton* removeButton;
-	std::vector<std::shared_ptr<Image>> images;
 
 public:
 	ImageTab(Frame* parent, wxNotebook* guiParent);
@@ -21,7 +20,6 @@ public:
 
 	void resizeContainer();
 	Image* getImage(wxString name);
-	Image* tryGetImage(wxString name);
 
 };
 

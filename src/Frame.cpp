@@ -1,6 +1,6 @@
 #include "Headers.h"
 
-Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, wxSize(800, 600))
+Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, wxSize(1600, 1200))
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -18,14 +18,18 @@ Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, 
 	Connect(fileMenu->Append(wxID_ANY, _T("&Quit"))->GetId(), wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&Frame::OnQuit);
 	SetMenuBar(menuBar);
 
-	log_textctrl = new wxTextCtrl(this, -1, wxEmptyString, wxPoint(0, 250), wxSize(700, 100), wxTE_MULTILINE);
+	/*log_textctrl = new wxTextCtrl(this, -1, wxEmptyString, wxPoint(0, 250), wxSize(700, 100), wxTE_MULTILINE);
 
 	logger = new wxLogTextCtrl(log_textctrl);
-	logger->SetActiveTarget(logger);
+	logger->SetActiveTarget(logger);*/
 
 	notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP);
 	imageTab = new ImageTab(this, notebook);
+	hitboxTab = new HitboxTab(this, notebook);
 	notebook->AddPage(imageTab, _("Images"));
+	notebook->AddPage(hitboxTab, _("Hitboxes"));
+
+	imagesContainer = new ImagesContainer();
 
 	sizer->Add(notebook, 1, wxEXPAND | wxALL, 0);
 	SetSizerAndFit(sizer);
@@ -95,4 +99,9 @@ void Frame::OnSaveAs(wxCommandEvent& event)
 void Frame::OnSave(wxCommandEvent& event)
 {
 	//*TODO* Implement this after the main interface
+}
+
+ImagesContainer* Frame::getImagesContainer()
+{
+	return imagesContainer;
 }
