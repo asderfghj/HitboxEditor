@@ -30,6 +30,16 @@ Image* ImagesContainer::getImage(wxString _name)
 	return NULL;
 }
 
+Image* ImagesContainer::getImage(int _pos)
+{
+	return images[_pos].get();
+}
+
+int ImagesContainer::getNumberOfImages()
+{
+	return images.size();
+}
+
 bool ImagesContainer::checkForImage(wxString _path)
 {
 	for (size_t i = 0; i < images.size(); i++)

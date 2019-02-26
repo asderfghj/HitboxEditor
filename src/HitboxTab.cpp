@@ -57,7 +57,23 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	vboxDisplayImage->Add(0, 0, 1, wxEXPAND | wxALL, 0);
 	imageContainer->SetSizer(vboxDisplayImage);
 
-
-
 	SetSizerAndFit(hboxMaster);
+
+}
+
+void HitboxTab::AddEntry(wxString _imageName)
+{
+	imagesBox->Append(_imageName);
+}
+
+void HitboxTab::RemoveEntry(wxString _imageName)
+{
+	for (size_t i = 0; i < imagesBox->GetCount(); i++)
+	{
+		if (imagesBox->GetString(i) == _imageName)
+		{
+			imagesBox->Delete(i);
+			break;
+		}
+	}
 }

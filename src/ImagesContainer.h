@@ -10,7 +10,10 @@ public:
 	void addImage(std::shared_ptr<Image> _image);
 	void removeImage(wxString _name);
 	Image* getImage(wxString _name);
+	Image* getImage(int _pos);
+	int getNumberOfImages();
 	bool checkForImage(wxString _path);
+
 
 };
 

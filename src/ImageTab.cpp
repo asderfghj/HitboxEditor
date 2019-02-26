@@ -51,8 +51,10 @@ void ImageTab::resizeContainer()
 
 void ImageTab::onRemoveClicked(wxCommandEvent& event)
 {
+	parent->ImageRemoved(imagesbox->GetStringSelection());
 	parent->getImagesContainer()->removeImage(imagesbox->GetStringSelection());
 	imagesbox->Delete(imagesbox->GetSelection());
+	image->Hide();
 }
 
 void ImageTab::onAddClicked(wxCommandEvent& event)
@@ -84,6 +86,7 @@ void ImageTab::onAddClicked(wxCommandEvent& event)
 	imageInfo = new Image(path);
 	parent->getImagesContainer()->addImage(std::shared_ptr<Image>(imageInfo));
 	imagesbox->Append(imageInfo->name);
+	parent->ImageAdded(imageInfo->name);
 }
 
 Image* ImageTab::getImage(wxString name)

@@ -32,7 +32,8 @@ class Frame : public wxFrame
 		void OnReopen(wxCommandEvent& event);
 		void OnOpen(wxCommandEvent& event);
 		ImagesContainer* getImagesContainer();
-
+		void ImageAdded(wxString _imageName);
+		void ImageRemoved(wxString _imageName);
 };
 
 #endif // !FRAME_H_

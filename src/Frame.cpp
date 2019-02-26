@@ -29,6 +29,7 @@ Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, 
 	notebook->AddPage(imageTab, _("Images"));
 	notebook->AddPage(hitboxTab, _("Hitboxes"));
 
+
 	imagesContainer = new ImagesContainer();
 
 	sizer->Add(notebook, 1, wxEXPAND | wxALL, 0);
@@ -104,4 +105,14 @@ void Frame::OnSave(wxCommandEvent& event)
 ImagesContainer* Frame::getImagesContainer()
 {
 	return imagesContainer;
+}
+
+void Frame::ImageAdded(wxString _imageName)
+{
+	hitboxTab->AddEntry(_imageName);
+}
+
+void Frame::ImageRemoved(wxString _imageName)
+{
+	hitboxTab->RemoveEntry(_imageName);
 }

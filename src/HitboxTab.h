@@ -17,9 +17,8 @@ class HitboxTab : public wxPanel
 
 public:
 	HitboxTab(Frame* parent, wxNotebook* guiParent);
-	/*void UpdateContainer();//need to link this to opening the tab
-	void SetFocus() override;
-	*/
+	void AddEntry(wxString _imageName);
+	void RemoveEntry(wxString _imageName);
 
 };
 
