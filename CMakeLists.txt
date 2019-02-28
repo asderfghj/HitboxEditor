@@ -34,6 +34,10 @@ add_executable(hitboxEditor WIN32
 	src/HitboxTab.h
 	src/ImagesContainer.cpp
 	src/ImagesContainer.h
+	src/Canvas.cpp
+	src/Canvas.h
+	src/CanvasView.cpp
+	src/CanvasView.h
 )
 
 if(WIN32)

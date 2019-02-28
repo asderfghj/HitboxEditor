@@ -16,6 +16,7 @@
 #include <wx/tokenzr.h>
 #include <wx/dcbuffer.h>
 #include <wx/spinctrl.h>
+#include <wx/docview.h>
 
 
 //internal files
@@ -23,8 +24,11 @@
 #include "ImagesContainer.h"
 #include "Application.h"
 #include "Frame.h"
+#include "Canvas.h"
 #include "ImageTab.h"
 #include "HitboxTab.h"
+#include "CanvasView.h"
+
 
 
 #endif // !HEADERS_H_
