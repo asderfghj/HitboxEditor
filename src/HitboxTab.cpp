@@ -6,8 +6,6 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	wxBoxSizer* vboxColBoxes = new wxStaticBoxSizer(wxVERTICAL, this, _("Collision Boxes"));
 	wxBoxSizer* vboxMaster = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* hboxMaster = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer* hboxPosition = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Position"));
-	wxBoxSizer* hboxSize = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Size"));
 	wxBoxSizer* hboxAdd = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* hboxHRemove = new wxBoxSizer(wxHORIZONTAL);
 
@@ -15,47 +13,26 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	imagesBox = new wxListBox(this, wxID_ANY);
 	imagesBox->SetMinSize(wxSize(200, 0));
 	Connect(imagesBox->GetId(), wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&HitboxTab::OnImageBoxClick);
+	
 
-	addHitboxButton = new wxButton(this, wxID_ANY, _("Add Hitbox"));
-	Connect(addHitboxButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&HitboxTab::onAddHitboxClicked);
-	addHitboxButton->SetMaxSize(wxSize(100, 25));
-	addHurtboxButton = new wxButton(this, wxID_ANY, _("Add Hurtbox"));
-	Connect(addHurtboxButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&HitboxTab::onAddHurtboxClicked);
-	addHurtboxButton->SetMaxSize(wxSize(100, 25));
 	removeButton = new wxButton(this, wxID_ANY, _("Remove"));
 	Connect(removeButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&HitboxTab::onRemoveClicked);
-	removeButton->SetMaxSize(wxSize(200, 25));
+	removeButton->SetMaxSize(wxSize(1000, 25));
 
 	hitboxesBox = new wxListBox(this, wxID_ANY);
 	hitboxesBox->SetMinSize(wxSize(200, 0));
-
-	posXDisplay = new wxSpinCtrlDouble(this, wxID_ANY);
-	posXDisplay->SetMaxSize(wxSize(200, 25));
-	posYDisplay = new wxSpinCtrlDouble(this, wxID_ANY);
-	posYDisplay->SetMaxSize(wxSize(200, 25));
-	WidthDisplay = new wxSpinCtrlDouble(this, wxID_ANY);
-	WidthDisplay->SetMaxSize(wxSize(200, 25));
-	HeightDisplay = new wxSpinCtrlDouble(this, wxID_ANY);
-	HeightDisplay->SetMaxSize(wxSize(200, 25));
+	Connect(hitboxesBox->GetId(), wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&HitboxTab::OnHitboxBoxClick);
 
 
 
-	imageContainer = new Canvas(this);
+	imageContainer = new Canvas(this, this);
 	canvasView = new CanvasView(imageContainer, this);
 
-	hboxPosition->Add(posXDisplay, 1, wxEXPAND | wxALL, 0);
-	hboxPosition->Add(posYDisplay, 1, wxEXPAND | wxALL, 0);
-
-	hboxSize->Add(WidthDisplay, 1, wxEXPAND | wxALL, 0);
-	hboxSize->Add(HeightDisplay, 1, wxEXPAND | wxALL, 0);
-
-	hboxAdd->Add(addHitboxButton, 1, wxEXPAND | wxRIGHT, 5);
-	hboxAdd->Add(addHurtboxButton, 1, wxEXPAND | wxALL, 0);
+	/*hboxAdd->Add(addHitboxButton, 1, wxEXPAND | wxRIGHT, 5);
+	hboxAdd->Add(addHurtboxButton, 1, wxEXPAND | wxALL, 0);*/
 
 	vboxImages->Add(imagesBox, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(hitboxesBox, 1, wxEXPAND | wxALL, 0);
-	vboxColBoxes->Add(hboxPosition, 1, wxEXPAND | wxALL, 0);
-	vboxColBoxes->Add(hboxSize, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(hboxAdd, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(removeButton, 1, wxEXPAND | wxALL, 0);
 
@@ -80,25 +57,54 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 
 
 	SetSizerAndFit(hboxMaster);
-
+	hitboxCounter = 0;
+	hurtboxCounter = 0;
 }
 
-void HitboxTab::AddEntry(wxString _imageName)
+void HitboxTab::AddEntry(wxString name)
 {
-	imagesBox->Append(_imageName);
+	imagesBox->Append(name);
 }
 
-void HitboxTab::RemoveEntry(wxString _imageName)
+void HitboxTab::RemoveEntry(wxString name)
 {
-	for (size_t i = 0; i < imagesBox->GetCount(); i++)
+	for (int i = 0; i < imagesBox->GetCount(); i++)
 	{
-		if (imagesBox->GetString(i) == _imageName)
-		{
-			imagesBox->Delete(i);
-			break;
-		}
+		imagesBox->Delete(i);
 	}
-	//displayImage->Hide();
+}
+
+void HitboxTab::RemoveHitbox()
+{
+	if (hitboxesBox->GetSelection() != wxNOT_FOUND)
+	{
+		if (hitboxesBox->GetStringSelection().Find("hit") != wxNOT_FOUND)
+		{
+			for (size_t i = 0; i < hitboxes.size(); i++)
+			{
+				if (hitboxes.at(i)->getID() == hitboxesBox->GetStringSelection())
+				{
+					hitboxes.erase(hitboxes.begin() + i);
+					hitboxesBox->Delete(hitboxesBox->GetSelection());
+					break;
+				}
+			}
+		}
+		else if (hitboxesBox->GetStringSelection().Find("hurt") != wxNOT_FOUND)
+		{
+			for (size_t i = 0; i < hurtboxes.size(); i++)
+			{
+				if (hurtboxes.at(i)->getID() == hitboxesBox->GetStringSelection())
+				{
+					hurtboxes.erase(hurtboxes.begin() + i);
+					hitboxesBox->Delete(hitboxesBox->GetSelection());
+					break;
+				}
+			}
+		}
+		currentlySelectedHitbox = NULL;
+		imageContainer->Refresh();
+	}
 }
 
 void HitboxTab::resizeContainer()
@@ -129,7 +135,28 @@ void HitboxTab::OnImageBoxClick(wxCommandEvent& event)
 		canvasView->OnUpdate(NULL);
 	}
 
-	resizeContainer();
+	imageContainer->FixViewOffset();
+
+}
+
+void HitboxTab::OnHitboxBoxClick(wxCommandEvent& event)
+{
+	if (hitboxesBox->GetSelection() != wxNOT_FOUND)
+	{
+		deselectSelectedHitbox();
+		if (hitboxesBox->GetStringSelection().Find(_("hit")) != wxNOT_FOUND)
+		{
+			getHitbox(hitboxesBox->GetStringSelection())->setSelected(true);
+			currentlySelectedHitbox = getHitbox(hitboxesBox->GetStringSelection());
+		}
+		else
+		{
+			getHurtbox(hitboxesBox->GetStringSelection())->setSelected(true);
+			currentlySelectedHitbox = getHurtbox(hitboxesBox->GetStringSelection());
+		}
+		imageContainer->Refresh();
+	}
+
 }
 
 void HitboxTab::onAddHitboxClicked(wxCommandEvent& event)
@@ -144,10 +171,101 @@ void HitboxTab::onAddHurtboxClicked(wxCommandEvent& event)
 
 void HitboxTab::onRemoveClicked(wxCommandEvent& event)
 {
-
+	RemoveHitbox();
 }
 
 Image* HitboxTab::getCurrentlySelectedImage()
 {
 	return getImage(imagesBox->GetStringSelection());
+}
+
+void HitboxTab::addHitbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, bool _isHurtbox)
+{
+	wxString hitboxString;
+	if (!_isHurtbox)
+	{
+		hitboxString = wxString::Format("hitbox_%i", hitboxCounter);
+		hitboxes.push_back(std::make_shared<hitbox>(_cX, _cY, _iX, _iY, _w, _h, _oX, _oY, hitboxString));
+		hitboxesBox->Append(hitboxString);
+		hitboxCounter++;
+	}
+	else
+	{
+		hitboxString = wxString::Format("hurtbox_%i", hurtboxCounter);
+		hurtboxes.push_back(std::make_shared<hitbox>(_cX, _cY, _iX, _iY, _w, _h, _oX, _oY, hitboxString));
+		hitboxesBox->Append(hitboxString);
+		hurtboxCounter++;
+	}
+}
+
+/*void HitboxTab::addHurtbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY)
+{
+	wxString hurtboxString = wxString::Format("hurtbox_%i", hurtboxCounter);
+	hurtboxes.push_back(std::make_shared<hitbox>(_cX, _cY, _iX, _iY, _w, _h, _oX, _oY, hurtboxString));
+	hitboxesBox->Append(hurtboxString);
+	hurtboxCounter++;
+}*/
+
+std::shared_ptr<hitbox> HitboxTab::getHitbox(int _index)
+{
+	return hitboxes.at(_index);
+}
+
+std::shared_ptr<hitbox> HitboxTab::getHitbox(wxString _ID)
+{
+	for (size_t i = 0; i < hitboxes.size(); i++)
+	{
+		if (hitboxes.at(i)->getID() == _ID)
+		{
+			return hitboxes.at(i);
+		}
+	}
+
+	return NULL;
+}
+
+int HitboxTab::getHitboxArraySize()
+{
+	return hitboxes.size();
+}
+
+std::shared_ptr<hitbox> HitboxTab::getHurtbox(int _index)
+{
+	return hurtboxes.at(_index);
+}
+
+std::shared_ptr<hitbox> HitboxTab::getHurtbox(wxString _ID)
+{
+	for (size_t i = 0; i < hurtboxes.size(); i++)
+	{
+		if (hurtboxes.at(i)->getID() == _ID)
+		{
+			return hurtboxes.at(i);
+		}
+	}
+	return NULL;
+}
+
+int HitboxTab::getHurtboxArraySize()
+{
+	return hurtboxes.size();
+}
+
+void HitboxTab::deselectSelectedHitbox()
+{
+	for (size_t i = 0; i < hitboxes.size(); i++)
+	{
+		if (hitboxes.at(i)->getSelected())
+		{
+			hitboxes.at(i)->setSelected(false);
+		}
+	}
+
+	for (size_t i = 0; i < hurtboxes.size(); i++)
+	{
+		if (hurtboxes.at(i)->getSelected())
+		{
+			hurtboxes.at(i)->setSelected(false);
+		}
+	}
 }

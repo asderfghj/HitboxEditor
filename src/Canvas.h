@@ -12,11 +12,13 @@ class Canvas : public wxWindow
 	CanvasView *m_View;
 	wxRect m_selection;
 	static wxSize ScrollingIncrement;
+	HitboxTab *tabParent;
+	bool m_leftMouseDown, m_rightMouseDown;
 
 	void Init();
 public:
 	Canvas();
-	Canvas(wxWindow *Parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxBORDER_SUNKEN | wxHSCROLL | wxVSCROLL, const wxString &name = _("If this comes up, I'll be surprised"));
+	Canvas(wxWindow *Parent, HitboxTab *tabParent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxBORDER_SUNKEN | wxHSCROLL | wxVSCROLL, const wxString &name = _("If this comes up, I'll be surprised"));
 	bool Create(wxWindow *Parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxBORDER_SUNKEN | wxHSCROLL | wxVSCROLL, const wxString &name = _("If this comes up, I'll be surprised"));
 
 	CanvasView* GetView();
@@ -49,7 +51,11 @@ public:
 	void OnEraseBackground(wxEraseEvent &event);
 	void OnLeftDown(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
+	void OnRightDown(wxMouseEvent &event);
+	void OnRightUp(wxMouseEvent &event);
 	void OnMotion(wxMouseEvent &event);
+
+	void DrawHitboxes(wxBufferedPaintDC* dc);
 
 };
 

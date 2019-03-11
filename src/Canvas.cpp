@@ -7,15 +7,16 @@ Canvas::Canvas()
 	Init();
 }
 
-Canvas::Canvas(wxWindow *Parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
+Canvas::Canvas(wxWindow *Parent, HitboxTab *tabParent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
 {
 	Init();
+	this->tabParent = tabParent;
 	Create(Parent, id, pos, size, style, name);
 }
 
 bool Canvas::Create(wxWindow *Parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
 {
-	bool res = wxWindow::Create(Parent, id, pos, size, style, name);
+	bool res = wxWindow::Create(Parent, id, pos, size);
 	if (res)
 	{
 
@@ -26,6 +27,8 @@ bool Canvas::Create(wxWindow *Parent, wxWindowID id, const wxPoint &pos, const w
 void Canvas::Init()
 {
 	m_View = NULL;
+	m_leftMouseDown = false;
+	m_rightMouseDown = false;
 	Connect(this->GetId(), wxEVT_SCROLLWIN_LINEUP, (wxObjectEventFunction)&Canvas::OnScrollLineUp);
 	Connect(this->GetId(), wxEVT_SCROLLWIN_LINEDOWN, (wxObjectEventFunction)&Canvas::OnScrollLineDown);
 	Connect(this->GetId(), wxEVT_SCROLLWIN_PAGEUP, (wxObjectEventFunction)&Canvas::OnScrollPageUp);
@@ -36,7 +39,11 @@ void Canvas::Init()
 	Connect(this->GetId(), wxEVT_IDLE, (wxObjectEventFunction)&Canvas::OnIdle);
 	Connect(this->GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)&Canvas::OnLeftDown);
 	Connect(this->GetId(), wxEVT_LEFT_UP, (wxObjectEventFunction)&Canvas::OnLeftUp);
+	Connect(this->GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)&Canvas::OnRightDown);
+	Connect(this->GetId(), wxEVT_RIGHT_UP, (wxObjectEventFunction)&Canvas::OnRightUp);
 	Connect(this->GetId(), wxEVT_MOTION, (wxObjectEventFunction)&Canvas::OnMotion);
+	Connect(this->GetId(), wxEVT_ERASE_BACKGROUND, (wxObjectEventFunction)&Canvas::OnEraseBackground);
+	//Connect(this->GetId(), wxEVT_SIZE, (wxObjectEventFunction)&Canvas::FixViewOffset);
 }
 
 
@@ -105,6 +112,7 @@ void Canvas::FixViewOffset()
 		wxRect displayRect = GetImageDisplayRect(pt);
 		wxSize offset(displayRect.GetPosition().x, displayRect.GetPosition().y);
 		m_View->SetViewOffset(offset);
+		//wxLogMessage((wxString::Format("View offset: (%i , %i)", offset.GetWidth(), offset.GetHeight())));
 	}
 }
 
@@ -138,47 +146,97 @@ void Canvas::OnIdle(wxIdleEvent &event)
 
 void Canvas::OnLeftDown(wxMouseEvent& event)
 {
-	SetFocus();
-	wxRect imageRect = GetImageDisplayRect(GetScrollPosition());
-	do
+	if (!m_rightMouseDown)
 	{
-		if (!m_View)
+		m_leftMouseDown = true;
+		SetFocus();
+		wxRect imageRect = GetImageDisplayRect(GetScrollPosition());
+		do
 		{
-			break;
-		}
+			if (!m_View)
+			{
+				break;
+			}
 
-		wxPoint cursorPosOnImage = ClientToImage(event.GetPosition());
+			wxPoint cursorPosOnImage = ClientToImage(event.GetPosition());
 
-		if (!imageRect.Contains(event.GetPosition()))
-		{
-			break;
-		}
+			if (!imageRect.Contains(event.GetPosition()))
+			{
+				break;
+			}
 
-		CaptureMouse();
-		Refresh();
-		m_TR = m_BL = event.GetPosition();
-		m_selection.SetPosition(event.GetPosition());
-		m_selection.SetSize(wxSize(0, 0));
-	} while (false);
+			CaptureMouse();
+			Refresh();
+			m_TR = m_BL = event.GetPosition();
+			m_selection.SetPosition(event.GetPosition());
+			m_selection.SetSize(wxSize(0, 0));
+		} while (false);
+	}
 }
 
 void Canvas::OnLeftUp(wxMouseEvent& event)
 {
-	if (HasCapture())
+	if (!m_rightMouseDown)
 	{
-		ReleaseMouse();
-		Refresh();
-		wxMessageBox(wxString::Format(
-			_("Selection rectangle\r\nScreen coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)\r\nLogical coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)"),
-			m_selection.GetLeft(), m_selection.GetTop(),
-			m_selection.GetWidth(), m_selection.GetHeight(),
-			ClientToImage(m_selection.GetTopLeft()).x,
-			ClientToImage(m_selection.GetTopLeft()).y,
-			m_selection.GetWidth(), m_selection.GetHeight()));
+		if (HasCapture())
+		{
+			ReleaseMouse();
+			Refresh();
 
-		m_TR = m_BL = wxPoint(0, 0);
-		m_selection.SetPosition(m_TR);
-		m_selection.SetSize(wxSize(0, 0));
+			tabParent->addHitbox(m_selection.GetLeft(), m_selection.GetTop(), ClientToImage(m_selection.GetTopLeft()).x, ClientToImage(m_selection.GetTopLeft()).y, m_selection.GetWidth(), m_selection.GetHeight(), m_View->GetViewOffset().x, m_View->GetViewOffset().y, false);
+			m_TR = m_BL = wxPoint(0, 0);
+			m_selection.SetPosition(m_TR);
+			m_selection.SetSize(wxSize(0, 0));
+			m_leftMouseDown = false;
+		}
+	}
+}
+
+void Canvas::OnRightDown(wxMouseEvent& event)
+{
+	if (!m_leftMouseDown)
+	{
+		m_rightMouseDown = true;
+		SetFocus();
+		wxRect imageRect = GetImageDisplayRect(GetScrollPosition());
+		do
+		{
+			if (!m_View)
+			{
+				break;
+			}
+
+			wxPoint cursorPosOnImage = ClientToImage(event.GetPosition());
+
+			if (!imageRect.Contains(event.GetPosition()))
+			{
+				break;
+			}
+
+			CaptureMouse();
+			Refresh();
+			m_TR = m_BL = event.GetPosition();
+			m_selection.SetPosition(event.GetPosition());
+			m_selection.SetSize(wxSize(0, 0));
+		} while (false);
+	}
+}
+
+void Canvas::OnRightUp(wxMouseEvent& event)
+{
+	if (!m_leftMouseDown)
+	{
+		if (HasCapture())
+		{
+			ReleaseMouse();
+			Refresh();
+			
+			tabParent->addHitbox(m_selection.GetLeft(), m_selection.GetTop(), ClientToImage(m_selection.GetTopLeft()).x, ClientToImage(m_selection.GetTopLeft()).y, m_selection.GetWidth(), m_selection.GetHeight(), m_View->GetViewOffset().x, m_View->GetViewOffset().y, true);
+			m_TR = m_BL = wxPoint(0, 0);
+			m_selection.SetPosition(m_TR);
+			m_selection.SetSize(wxSize(0, 0));
+			m_rightMouseDown = false;
+		}
 	}
 }
 
@@ -239,6 +297,7 @@ void Canvas::OnScrollLineUp(wxScrollWinEvent& event)
 	int increment = (event.GetOrientation() == wxHORIZONTAL ? Canvas::ScrollingIncrement.GetWidth() : Canvas::ScrollingIncrement.GetHeight());
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) - increment);
 	FixViewOffset();
+	// wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -247,6 +306,7 @@ void Canvas::OnScrollLineDown(wxScrollWinEvent& event)
 	int increment = (event.GetOrientation() == wxHORIZONTAL ? Canvas::ScrollingIncrement.GetWidth() : Canvas::ScrollingIncrement.GetHeight());
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) + increment);
 	FixViewOffset();
+	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -254,6 +314,7 @@ void Canvas::OnScrollPageUp(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) - GetScrollThumb(event.GetOrientation()));
 	FixViewOffset();
+	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -261,6 +322,7 @@ void Canvas::OnScrollPageDown(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) + GetScrollThumb(event.GetOrientation()));
 	FixViewOffset();
+	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -268,12 +330,14 @@ void Canvas::OnScrollThumbTrack(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), event.GetPosition());
 	FixViewOffset();
+	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
 void Canvas::OnScrollThumbRelease(wxScrollWinEvent& event)
 {
 	FixViewOffset();
+	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -293,6 +357,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 			dc.DrawRoundedRectangle(m_selection.GetPosition(), m_selection.GetSize(), 1.0f);
 		}
 	}
+	DrawHitboxes(&dc);
 }
 
 wxPoint Canvas::ClientToImage(const wxPoint &pos)
@@ -307,3 +372,39 @@ void Canvas::OnEraseBackground(wxEraseEvent &event)
 
 }
 
+void Canvas::DrawHitboxes(wxBufferedPaintDC* dc)
+{
+
+	for (int i = 0; i < tabParent->getHitboxArraySize(); i++)
+	{
+		dc->SetBrush(*wxTRANSPARENT_BRUSH);
+		dc->SetLogicalFunction(wxCOPY);
+		if (!tabParent->getHitbox(i)->getSelected())
+		{
+			dc->SetPen(wxPen(*wxRED, 3));
+		}
+		else
+		{
+			dc->SetPen(wxPen(*wxYELLOW, 3));
+		}
+
+		dc->DrawRectangle(tabParent->getHitbox(i)->getBox(m_View->GetViewOffset().x, m_View->GetViewOffset().y));
+	}
+
+	for (int i = 0; i < tabParent->getHurtboxArraySize(); i++)
+	{
+		dc->SetBrush(*wxTRANSPARENT_BRUSH);
+		dc->SetLogicalFunction(wxCOPY);
+		if (!tabParent->getHurtbox(i)->getSelected())
+		{
+			dc->SetPen(wxPen(*wxBLUE, 3));
+		}
+		else
+		{
+			dc->SetPen(wxPen(*wxYELLOW, 3));
+		}
+
+		dc->DrawRectangle(tabParent->getHurtbox(i)->getBox(m_View->GetViewOffset().x, m_View->GetViewOffset().y));
+	}
+
+}

@@ -3,6 +3,7 @@
 #include "Headers.h"
 
 class CanvasView;
+class hitbox;
 
 class HitboxTab : public wxPanel
 {
@@ -12,26 +13,35 @@ class HitboxTab : public wxPanel
 	//wxStaticBitmap* displayImage;
 	Canvas* imageContainer;
 	CanvasView* canvasView;
-	wxSpinCtrlDouble* posXDisplay;
-	wxSpinCtrlDouble* posYDisplay;
-	wxSpinCtrlDouble* WidthDisplay;
-	wxSpinCtrlDouble* HeightDisplay;
-	wxButton* addHitboxButton;
-	wxButton* addHurtboxButton;
 	wxButton* removeButton;
-
+	std::vector<std::shared_ptr<hitbox>> hitboxes;
+	std::vector<std::shared_ptr<hitbox>> hurtboxes;
+	int hitboxCounter, hurtboxCounter;
+	void deselectSelectedHitbox();
+	std::shared_ptr<hitbox> currentlySelectedHitbox;
 
 public:
 	HitboxTab(Frame* parent, wxNotebook* guiParent);
-	void AddEntry(wxString _imageName);
-	void RemoveEntry(wxString _imageName);
+	void AddEntry(wxString name);
+	void RemoveEntry(wxString name);
+	void RemoveHitbox();
 	void OnImageBoxClick(wxCommandEvent& event);
+	void OnHitboxBoxClick(wxCommandEvent& event);
 	void resizeContainer();
 	Image* getImage(wxString name);
 	void onAddHitboxClicked(wxCommandEvent& event);
 	void onAddHurtboxClicked(wxCommandEvent& event);
 	void onRemoveClicked(wxCommandEvent& event);
 	Image* getCurrentlySelectedImage();
+	void addHitbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, bool _isHurtbox);
+	//void addHurtbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY);
+	std::shared_ptr<hitbox> getHitbox(int _index);
+	std::shared_ptr<hitbox> getHitbox(wxString _ID);
+	int getHitboxArraySize();
+	std::shared_ptr<hitbox> getHurtbox(int _index);
+	std::shared_ptr<hitbox> getHurtbox(wxString _ID);
+	int getHurtboxArraySize();
+
 };
 
 

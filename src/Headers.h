@@ -28,7 +28,7 @@
 #include "ImageTab.h"
 #include "HitboxTab.h"
 #include "CanvasView.h"
-
+#include "Hitbox.h"
 
 
 #endif // !HEADERS_H_
