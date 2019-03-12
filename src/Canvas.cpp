@@ -182,12 +182,19 @@ void Canvas::OnLeftUp(wxMouseEvent& event)
 		{
 			ReleaseMouse();
 			Refresh();
-
 			tabParent->addHitbox(m_selection.GetLeft(), m_selection.GetTop(), ClientToImage(m_selection.GetTopLeft()).x, ClientToImage(m_selection.GetTopLeft()).y, m_selection.GetWidth(), m_selection.GetHeight(), m_View->GetViewOffset().x, m_View->GetViewOffset().y, false);
+			/*wxMessageBox(wxString::Format(
+				_("Selection rectangle\r\nScreen coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)\r\nLogical coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)"),
+				m_selection.GetLeft(), m_selection.GetTop(),
+				m_selection.GetWidth(), m_selection.GetHeight(),
+				ClientToImage(m_selection.GetTopLeft()).x,
+				ClientToImage(m_selection.GetTopLeft()).y,
+				m_selection.GetWidth(), m_selection.GetHeight()));*/
 			m_TR = m_BL = wxPoint(0, 0);
 			m_selection.SetPosition(m_TR);
 			m_selection.SetSize(wxSize(0, 0));
 			m_leftMouseDown = false;
+
 		}
 	}
 }

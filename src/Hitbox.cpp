@@ -1,5 +1,6 @@
 #include "Headers.h"
 
+
 hitbox::hitbox()
 {
 	clientX = 0.0f;
@@ -45,4 +46,30 @@ bool hitbox::getSelected()
 void hitbox::setSelected(bool _selected)
 {
 	isSelected = _selected;
+}
+
+nlohmann::json hitbox::getJSONInfo(Image* _currentImage, int _PPU)
+{
+	wxRealPoint convertedPosition = convertPosition(_currentImage, _PPU);
+	wxRealPoint convertedSize = convertSize(_PPU);
+	nlohmann::json rtn;
+	rtn["x"] = convertedPosition.x;
+	rtn["y"] = convertedPosition.y;
+	rtn["w"] = convertedSize.x;
+	rtn["h"] = convertedSize.y;
+	return rtn;
+}
+
+wxRealPoint hitbox::convertPosition(Image* _currentImage, int _PPU)
+{
+	float x = ((imageX - (_currentImage->image.GetWidth() / 2)) + (w / 2)) / _PPU;
+	float y = ((((imageY - (_currentImage->image.GetHeight() / 2)) + (h / 2)) / _PPU) * -1);
+	return wxRealPoint(x, y);
+}
+
+wxRealPoint hitbox::convertSize(int _PPU)
+{
+	float width = (w / _PPU);
+	float height = (h / _PPU);
+	return wxRealPoint(width, height);
 }

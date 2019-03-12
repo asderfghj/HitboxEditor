@@ -19,6 +19,10 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	Connect(removeButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&HitboxTab::onRemoveClicked);
 	removeButton->SetMaxSize(wxSize(1000, 25));
 
+	exportButton = new wxButton(this, wxID_ANY, _("Export"));
+	Connect(exportButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&HitboxTab::onExportClicked);
+	exportButton->SetMaxSize(wxSize(1000, 25));
+
 	hitboxesBox = new wxListBox(this, wxID_ANY);
 	hitboxesBox->SetMinSize(wxSize(200, 0));
 	Connect(hitboxesBox->GetId(), wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&HitboxTab::OnHitboxBoxClick);
@@ -35,6 +39,7 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	vboxColBoxes->Add(hitboxesBox, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(hboxAdd, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(removeButton, 1, wxEXPAND | wxALL, 0);
+	vboxColBoxes->Add(exportButton, 1, wxEXPAND | wxALL, 0);
 
 	vboxMaster->Add(vboxImages, 1, wxEXPAND | wxALL, 0);
 	vboxMaster->Add(vboxColBoxes, 1, wxEXPAND | wxALL, 0);
@@ -269,3 +274,31 @@ void HitboxTab::deselectSelectedHitbox()
 		}
 	}
 }
+
+nlohmann::json HitboxTab::generateJSON()
+{
+	nlohmann::json rtn;
+	std::vector<nlohmann::json> hitboxJSONData;
+	for (size_t i = 0; i < hitboxes.size(); i++)
+	{
+		hitboxJSONData.push_back(hitboxes.at(i)->getJSONInfo(getCurrentlySelectedImage(), 100));
+	}
+	std::vector<nlohmann::json> hurtboxJSONData;
+	for (size_t i = 0; i < hurtboxes.size(); i++)
+	{
+		hurtboxJSONData.push_back(hurtboxes.at(i)->getJSONInfo(getCurrentlySelectedImage(), 100));
+	}
+	rtn["Hitboxes"] = hitboxJSONData;
+	rtn["Hurtboxes"] = hurtboxJSONData;
+	return rtn;
+
+}
+
+void HitboxTab::onExportClicked(wxCommandEvent& event)
+{
+	std::ofstream jsonfile;
+	jsonfile.open("example.json");
+	jsonfile << generateJSON();
+	jsonfile.close();
+}
+

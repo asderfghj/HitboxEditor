@@ -12,11 +12,14 @@ public:
 	wxString getID();
 	bool getSelected();
 	void setSelected(bool _selected);
+	nlohmann::json getJSONInfo(Image* _currentImage, int _PPU);
 
 private:
 	float clientX, clientY, imageX, imageY, w, h, startOffsetX, startOffsetY;
 	wxString ID;
 	bool isSelected;
+	wxRealPoint convertPosition(Image* _currentImage, int _PPU);
+	wxRealPoint convertSize(int _PPU);
 };
 
 

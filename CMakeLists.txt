@@ -4,6 +4,7 @@ project (HITBOXEDITOR)
 if(WIN32)
 	include_directories(
 		${PROJECT_SOURCE_DIR}/contrib/wxwidgets/msvc/include
+		${PROJECT_SOURCE_DIR}/contrib/jsonserialiser
 	)
 		
 	link_directories(

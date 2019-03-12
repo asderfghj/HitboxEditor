@@ -14,11 +14,13 @@ class HitboxTab : public wxPanel
 	Canvas* imageContainer;
 	CanvasView* canvasView;
 	wxButton* removeButton;
+	wxButton* exportButton;
 	std::vector<std::shared_ptr<hitbox>> hitboxes;
 	std::vector<std::shared_ptr<hitbox>> hurtboxes;
 	int hitboxCounter, hurtboxCounter;
 	void deselectSelectedHitbox();
 	std::shared_ptr<hitbox> currentlySelectedHitbox;
+	nlohmann::json generateJSON();
 
 public:
 	HitboxTab(Frame* parent, wxNotebook* guiParent);
@@ -41,7 +43,7 @@ public:
 	std::shared_ptr<hitbox> getHurtbox(int _index);
 	std::shared_ptr<hitbox> getHurtbox(wxString _ID);
 	int getHurtboxArraySize();
-
+	void onExportClicked(wxCommandEvent& event);
 };
 
 

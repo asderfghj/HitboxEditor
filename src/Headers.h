@@ -17,6 +17,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/spinctrl.h>
 #include <wx/docview.h>
+#include <nlohmann/json.hpp>
 
 
 //internal files
