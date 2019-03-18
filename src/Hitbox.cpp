@@ -57,6 +57,7 @@ nlohmann::json hitbox::getJSONInfo(Image* _currentImage, int _PPU)
 	rtn["y"] = convertedPosition.y;
 	rtn["w"] = convertedSize.x;
 	rtn["h"] = convertedSize.y;
+	rtn["outlierData"] = "tester";
 	return rtn;
 }
 

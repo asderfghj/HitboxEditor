@@ -15,12 +15,15 @@ class HitboxTab : public wxPanel
 	CanvasView* canvasView;
 	wxButton* removeButton;
 	wxButton* exportButton;
-	std::vector<std::shared_ptr<hitbox>> hitboxes;
-	std::vector<std::shared_ptr<hitbox>> hurtboxes;
+	wxButton* importButton;
+	wxSpinCtrl* PPUValue;
+	/*std::vector<std::shared_ptr<hitbox>> hitboxes;
+	std::vector<std::shared_ptr<hitbox>> hurtboxes;*/
 	int hitboxCounter, hurtboxCounter;
 	void deselectSelectedHitbox();
 	std::shared_ptr<hitbox> currentlySelectedHitbox;
 	nlohmann::json generateJSON();
+	int PPU;
 
 public:
 	HitboxTab(Frame* parent, wxNotebook* guiParent);
@@ -31,8 +34,6 @@ public:
 	void OnHitboxBoxClick(wxCommandEvent& event);
 	void resizeContainer();
 	Image* getImage(wxString name);
-	void onAddHitboxClicked(wxCommandEvent& event);
-	void onAddHurtboxClicked(wxCommandEvent& event);
 	void onRemoveClicked(wxCommandEvent& event);
 	Image* getCurrentlySelectedImage();
 	void addHitbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, bool _isHurtbox);
@@ -44,6 +45,8 @@ public:
 	std::shared_ptr<hitbox> getHurtbox(wxString _ID);
 	int getHurtboxArraySize();
 	void onExportClicked(wxCommandEvent& event);
+	void onImportClicked(wxCommandEvent& event);
+	void onSpinValChanged(wxSpinEvent& event);
 };
 
 

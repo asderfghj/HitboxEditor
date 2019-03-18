@@ -17,6 +17,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/spinctrl.h>
 #include <wx/docview.h>
+#include <wx/textfile.h>
 #include <nlohmann/json.hpp>
 
 
@@ -30,6 +31,7 @@
 #include "HitboxTab.h"
 #include "CanvasView.h"
 #include "Hitbox.h"
+#include "HitboxData.h"
 
 
 #endif // !HEADERS_H_

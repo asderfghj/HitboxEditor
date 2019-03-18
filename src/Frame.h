@@ -11,11 +11,6 @@ class Frame : public wxFrame
 	wxNotebook* notebook;
 	ImageTab* imageTab;
 	HitboxTab* hitboxTab;
-
-	wxString filePath;
-
-	wxMenuBar* menuBar;
-	wxMenu* fileMenu;
 	
 	wxTextCtrl* log_textctrl;
 	wxLogTextCtrl* logger;
@@ -25,12 +20,6 @@ class Frame : public wxFrame
 	public:
 		Frame();
 
-		void OnNew(wxCommandEvent& event);
-		void OnQuit(wxCommandEvent& event);
-		void OnSave(wxCommandEvent& event);
-		void OnSaveAs(wxCommandEvent& event);
-		void OnReopen(wxCommandEvent& event);
-		void OnOpen(wxCommandEvent& event);
 		ImagesContainer* getImagesContainer();
 		void ImageAdded(wxString _imageName);
 		void ImageRemoved(wxString _imageName);

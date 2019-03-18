@@ -2,18 +2,32 @@
 #define IMAGESCONTAINER_H_
 #include "Headers.h"
 
+class HitboxData;
+class hitbox;
+
 class ImagesContainer
 {
-	std::vector<std::shared_ptr<Image>> images;
+	std::vector<std::shared_ptr<HitboxData>> files;
 
 public:
 	void addImage(std::shared_ptr<Image> _image);
 	void removeImage(wxString _name);
 	Image* getImage(wxString _name);
-	Image* getImage(int _pos);
-	int getNumberOfImages();
-	bool checkForImage(wxString _path);
+	std::shared_ptr<hitbox> getHitBox(wxString _imageName, int _HBIndex);
+	std::shared_ptr<hitbox> getHitBox(wxString _imageName, wxString _ID);
+	void AddHitbox(wxString _imageName, float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, wxString _ID);
+	void RemoveHitbox(wxString _imagename, wxString _HBID);
+	int getNumberOfHitboxes(wxString _imagename);
+	int getHitboxCounter(wxString _imageName);
 
+	std::shared_ptr<hitbox> getHurtBox(wxString _imageName, int _HBIndex);
+	std::shared_ptr<hitbox> getHurtBox(wxString _imageName, wxString _ID);
+	void AddHurtbox(wxString _imageName, float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, wxString _ID);
+	void RemoveHurtbox(wxString _imagename, wxString _HBID);
+	int getNumberOfHurtboxes(wxString _imagename);
+	int getHurtboxCounter(wxString _imageName);
+	bool checkForImage(wxString _path);
+	void DeselectAll(wxString _name);
 
 };
 
