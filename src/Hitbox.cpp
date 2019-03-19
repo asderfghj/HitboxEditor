@@ -57,7 +57,15 @@ nlohmann::json hitbox::getJSONInfo(Image* _currentImage, int _PPU)
 	rtn["y"] = convertedPosition.y;
 	rtn["w"] = convertedSize.x;
 	rtn["h"] = convertedSize.y;
-	rtn["outlierData"] = "tester";
+	rtn["cX"] = clientX;
+	rtn["cY"] = clientY;
+	rtn["iX"] = imageX;
+	rtn["iY"] = imageY;
+	rtn["iW"] = w;
+	rtn["iH"] = h;
+	rtn["oX"] = startOffsetX;
+	rtn["oY"] = startOffsetY;
+	rtn["ID"] = ID.ToStdString();
 	return rtn;
 }
 

@@ -5,6 +5,7 @@ if(WIN32)
 	include_directories(
 		${PROJECT_SOURCE_DIR}/contrib/wxwidgets/msvc/include
 		${PROJECT_SOURCE_DIR}/contrib/jsonserialiser
+		${PROJECT_SOURCE_DIR}/contrib/images
 	)
 		
 	link_directories(

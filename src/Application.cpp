@@ -1,4 +1,5 @@
 #include "Headers.h"
+#include "icon/icon.xpm"
 
 bool Application::OnInit()
 {

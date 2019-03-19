@@ -71,6 +71,18 @@ void ImagesContainer::AddHitbox(wxString _imageName, float _cX, float _cY, float
 	}
 }
 
+void ImagesContainer::AddHitbox(wxString _imageName, nlohmann::json jsonData)
+{
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		if (files[i]->getImage()->name == _imageName)
+		{
+			std::string ID = jsonData["ID"];
+			files[i]->addHitbox(jsonData["cX"], jsonData["cY"], jsonData["iX"], jsonData["iY"], jsonData["iW"], jsonData["iH"], jsonData["oX"], jsonData["oY"], _(ID));
+		}
+	}
+}
+
 void ImagesContainer::RemoveHitbox(wxString _imageName, wxString _HBID)
 {
 	for (size_t i = 0; i < files.size(); i++)
@@ -104,6 +116,18 @@ int ImagesContainer::getHitboxCounter(wxString _imageName)
 		}
 	}
 }
+
+void ImagesContainer::setHitboxCounter(wxString _imageName, int _counter)
+{
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		if (files[i]->getImage()->name == _imageName)
+		{
+			files[i]->setHitboxCounter(_counter);
+		}
+	}
+}
+
 
 std::shared_ptr<hitbox> ImagesContainer::getHurtBox(wxString _imageName, int _HBIndex)
 {
@@ -146,6 +170,18 @@ void ImagesContainer::AddHurtbox(wxString _imageName, float _cX, float _cY, floa
 	}
 }
 
+void ImagesContainer::AddHurtbox(wxString _imageName, nlohmann::json jsonData)
+{
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		if (files[i]->getImage()->name == _imageName)
+		{
+			std::string ID = jsonData["ID"];
+			files[i]->addHurtbox(jsonData["cX"], jsonData["cY"], jsonData["iX"], jsonData["iY"], jsonData["iW"], jsonData["iH"], jsonData["oX"], jsonData["oY"], _(ID));
+		}
+	}
+}
+
 void ImagesContainer::RemoveHurtbox(wxString _imageName, wxString _HBID)
 {
 	for (size_t i = 0; i < files.size(); i++)
@@ -180,6 +216,18 @@ int ImagesContainer::getHurtboxCounter(wxString _imageName)
 	}
 }
 
+void ImagesContainer::setHurtboxCounter(wxString _imageName, int _counter)
+{
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		if (files[i]->getImage()->name == _imageName)
+		{
+			files[i]->setHurtboxCounter(_counter);
+		}
+	}
+}
+
+
 bool ImagesContainer::checkForImage(wxString _path)
 {
 	for (size_t i = 0; i < files.size(); i++)
@@ -192,13 +240,10 @@ bool ImagesContainer::checkForImage(wxString _path)
 	return false;
 }
 
-void ImagesContainer::DeselectAll(wxString _name)
+void ImagesContainer::DeselectAll()
 {
 	for (size_t i = 0; i < files.size(); i++)
 	{
-		if (files[i]->getImage()->name == _name)
-		{
-			files[i]->Deselect();
-		}
+		files[i]->Deselect();
 	}
 }

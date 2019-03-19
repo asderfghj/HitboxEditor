@@ -61,6 +61,11 @@ int HitboxData::getHitboxCounter()
 	return hitboxCounter;
 }
 
+void HitboxData::setHitboxCounter(int _counter)
+{
+	hitboxCounter = _counter;
+}
+
 void HitboxData::addHurtbox(float _cX, float _cY, float _iX, float _iY, float _w, float _h, float _oX, float _oY, wxString _ID)
 {
 	hurtboxes.push_back(std::make_shared<hitbox>(_cX, _cY, _iX, _iY, _w, _h, _oX, _oY, _ID));
@@ -103,6 +108,11 @@ int HitboxData::getHurtboxCount()
 int HitboxData::getHurtboxCounter()
 {
 	return hurtboxCounter;
+}
+
+void HitboxData::setHurtboxCounter(int _counter)
+{
+	hurtboxCounter = _counter;
 }
 
 void HitboxData::Deselect()

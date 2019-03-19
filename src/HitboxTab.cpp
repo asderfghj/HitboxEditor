@@ -81,6 +81,28 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	PPU = 100;
 }
 
+void HitboxTab::ForceUpdate()
+{
+	if (imagesBox->GetSelection() != wxNOT_FOUND)
+	{
+		wxBitmap bmp = wxBitmap(getImage(imagesBox->GetStringSelection())->image);
+		canvasView->OnUpdate(NULL);
+		parent->getImagesContainer()->DeselectAll();
+		hitboxesBox->Clear();
+		for (int i = 0; i < parent->getImagesContainer()->getNumberOfHitboxes(imagesBox->GetStringSelection()); i++)
+		{
+			hitboxesBox->Append(parent->getImagesContainer()->getHitBox(imagesBox->GetStringSelection(), i)->getID());
+		}
+
+		for (int i = 0; i < parent->getImagesContainer()->getNumberOfHurtboxes(imagesBox->GetStringSelection()); i++)
+		{
+			hitboxesBox->Append(parent->getImagesContainer()->getHurtBox(imagesBox->GetStringSelection(), i)->getID());
+		}
+	}
+
+	imageContainer->FixViewOffset();
+}
+
 void HitboxTab::AddEntry(wxString name)
 {
 	imagesBox->Append(name);
@@ -139,10 +161,20 @@ void HitboxTab::OnImageBoxClick(wxCommandEvent& event)
 	{
 		wxBitmap bmp = wxBitmap(getImage(imagesBox->GetStringSelection())->image);
 		canvasView->OnUpdate(NULL);
+		parent->getImagesContainer()->DeselectAll();
+		hitboxesBox->Clear();
+		for (int i = 0; i < parent->getImagesContainer()->getNumberOfHitboxes(imagesBox->GetStringSelection()); i++)
+		{
+			hitboxesBox->Append(parent->getImagesContainer()->getHitBox(imagesBox->GetStringSelection(), i)->getID());
+		}
+
+		for (int i = 0; i < parent->getImagesContainer()->getNumberOfHurtboxes(imagesBox->GetStringSelection()); i++)
+		{
+			hitboxesBox->Append(parent->getImagesContainer()->getHurtBox(imagesBox->GetStringSelection(), i)->getID());
+		}
 	}
 
 	imageContainer->FixViewOffset();
-	//TODO Update hitboxbox when changing image
 }
 
 void HitboxTab::OnHitboxBoxClick(wxCommandEvent& event)
@@ -270,7 +302,7 @@ void HitboxTab::deselectSelectedHitbox()
 {
 	if (imagesBox->GetSelection() != wxNOT_FOUND)
 	{
-		parent->getImagesContainer()->DeselectAll(imagesBox->GetStringSelection());
+		parent->getImagesContainer()->DeselectAll();
 	}
 }
 
@@ -291,6 +323,8 @@ nlohmann::json HitboxTab::generateJSON()
 		}
 		rtn["Hitboxes"] = hitboxJSONData;
 		rtn["Hurtboxes"] = hurtboxJSONData;
+		rtn["HitboxCounter"] = parent->getImagesContainer()->getHitboxCounter(imagesBox->GetStringSelection());
+		rtn["HurtboxCounter"] = parent->getImagesContainer()->getHurtboxCounter(imagesBox->GetStringSelection());
 		return rtn;
 	}
 	return NULL;
@@ -314,6 +348,11 @@ void HitboxTab::onExportClicked(wxCommandEvent& event)
 	}
 
 	saveDialog->Destroy();
+
+	if (path == _(""))
+	{
+		return;
+	}
 
 	if (savefile->Create(path))
 	{
@@ -351,28 +390,52 @@ void HitboxTab::onExportClicked(wxCommandEvent& event)
 
 void HitboxTab::onImportClicked(wxCommandEvent& event)
 {
-	wxFileDialog* openDialogue = NULL;
-	openDialogue = new wxFileDialog(this, _("Choose Hitbox data to import"), wxEmptyString, wxEmptyString, _("JSON Files (*.json) | *.json"), wxFD_OPEN);
-	wxString path, jsonString;
-	wxTextFile* openFile = new wxTextFile();
-
-	if (openDialogue->ShowModal() == wxID_OK)
+	if (imagesBox->GetSelection() != wxNOT_FOUND)
 	{
-		path = openDialogue->GetPath();
-	}
+		wxFileDialog* openDialogue = NULL;
+		openDialogue = new wxFileDialog(this, _("Choose Hitbox data to import"), wxEmptyString, wxEmptyString, _("JSON Files (*.json) | *.json"), wxFD_OPEN);
+		wxString path, jsonString;
+		wxTextFile* openFile = new wxTextFile();
+		nlohmann::json deserialisedJSON;
 
-	openDialogue->Destroy();
+		if (openDialogue->ShowModal() == wxID_OK)
+		{
+			path = openDialogue->GetPath();
+		}
 
-	if (openFile->Open(path))
-	{
-		jsonString = openFile->GetFirstLine();
-	}
-	else
-	{
-		return;
-	}
+		openDialogue->Destroy();
 
-	//TODO add a de-serialise JSON function after adding a datatype 
+		if (path == _(""))
+		{
+			return;
+		}
+
+		if (openFile->Open(path))
+		{
+			jsonString = openFile->GetFirstLine();
+		}
+		else
+		{
+			return;
+		}
+
+		deserialisedJSON = nlohmann::json::parse(jsonString.ToStdString());
+
+		for (int i = 0; i < deserialisedJSON["Hitboxes"].size(); i++)
+		{
+			parent->getImagesContainer()->AddHitbox(imagesBox->GetStringSelection(), deserialisedJSON["Hitboxes"][i]);
+		}
+
+		for (int i = 0; i < deserialisedJSON["Hurtboxes"].size(); i++)
+		{
+			parent->getImagesContainer()->AddHurtbox(imagesBox->GetStringSelection(), deserialisedJSON["Hurtboxes"][i]);
+		}
+
+		parent->getImagesContainer()->setHitboxCounter(imagesBox->GetStringSelection(), deserialisedJSON["HitboxCounter"]);
+		parent->getImagesContainer()->setHurtboxCounter(imagesBox->GetStringSelection(), deserialisedJSON["HurtboxCounter"]);
+
+	}
+	ForceUpdate();
 }
 
 void HitboxTab::onSpinValChanged(wxSpinEvent& event)

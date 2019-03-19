@@ -23,6 +23,7 @@ class HitboxTab : public wxPanel
 	void deselectSelectedHitbox();
 	std::shared_ptr<hitbox> currentlySelectedHitbox;
 	nlohmann::json generateJSON();
+	void ForceUpdate();
 	int PPU;
 
 public:
