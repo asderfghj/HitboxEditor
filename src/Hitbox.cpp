@@ -1,4 +1,7 @@
-#include "Headers.h"
+#include <wx/wx.h>
+#include <nlohmann/json.hpp>
+#include "Hitbox.h"
+#include "Image.h"
 
 
 hitbox::hitbox()

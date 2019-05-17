@@ -1,4 +1,9 @@
-#include "Headers.h"
+#include <wx/wx.h>
+#include "CanvasView.h"
+#include "Canvas.h"
+#include "Image.h"
+#include "HitboxTab.h"
+
 
 CanvasView::CanvasView(Canvas *_canvas, HitboxTab *_parent) : m_Scale(1.0)
 {
@@ -36,6 +41,16 @@ void CanvasView::ReCreateScaledBitmap()
 	else
 	{
 		m_ScaledBitmap = wxNullBitmap;
+	}
+}
+
+void CanvasView::ClearCanvas()
+{
+	m_ScaledBitmap = wxNullBitmap;
+	if (m_Canvas)
+	{
+		m_Canvas->AdjustScrollBars();
+		m_Canvas->Refresh();
 	}
 }
 

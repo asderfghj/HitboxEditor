@@ -13,6 +13,7 @@ if(WIN32)
 	)
 	
 	add_definitions(-DWXUSINGDLL)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	
 else()
 	#set(wxWidgets_ROOT_DIR / usr/local)
@@ -20,10 +21,11 @@ else()
 	include(${wxWidgets_USE_FILE})
 endif()
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 
 add_executable(hitboxEditor WIN32
 	src/main.cpp
-	src/Headers.h
 	src/Application.cpp
 	src/Application.h
 	src/Frame.cpp

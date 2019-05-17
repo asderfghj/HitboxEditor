@@ -1,4 +1,14 @@
-#include "Headers.h"
+#include <wx/wx.h>
+#include <wx/spinctrl.h>
+#include <wx/notebook.h>
+#include <wx/textfile.h>
+#include "HitboxTab.h"
+#include "Image.h"
+#include "CanvasView.h"
+#include "Frame.h"
+#include "Canvas.h"
+#include "Hitbox.h"
+#include "ImagesContainer.h"
 
 HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, wxID_ANY)
 {
@@ -44,9 +54,6 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 	imageContainer = new Canvas(this, this);
 	canvasView = new CanvasView(imageContainer, this);
 
-	/*hboxAdd->Add(addHitboxButton, 1, wxEXPAND | wxRIGHT, 5);
-	hboxAdd->Add(addHurtboxButton, 1, wxEXPAND | wxALL, 0);*/
-
 	vboxImages->Add(imagesBox, 1, wxEXPAND | wxALL, 0);
 	vboxColBoxes->Add(hitboxesBox, 1, wxEXPAND | wxALL, 0);
 	vboxPPU->Add(PPUValue, 1, wxEXPAND | wxALL, 0);
@@ -62,17 +69,6 @@ HitboxTab::HitboxTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, 
 
 	wxBoxSizer* vboxDisplayImage = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* hboxDisplayImage = new wxBoxSizer(wxHORIZONTAL);
-	//displayImage = new wxStaticBitmap(imageContainer, wxID_ANY, wxBitmap(wxImage(100, 100, true)));
-	//displayImage->Hide();
-
-	/*hboxDisplayImage->Add(0, 0, 1, wxEXPAND | wxALL, 0);
-	hboxDisplayImage->Add(displayImage, 0, wxEXPAND | wxALL, 5);
-	hboxDisplayImage->Add(0, 0, 1, wxEXPAND | wxALL, 0);
-
-	vboxDisplayImage->Add(0, 0, 1, wxEXPAND | wxALL, 0);
-	vboxDisplayImage->Add(hboxDisplayImage, 0, wxEXPAND | wxALL, 0);
-	vboxDisplayImage->Add(0, 0, 1, wxEXPAND | wxALL, 0);
-	imageContainer->SetSizer(vboxDisplayImage);*/
 
 
 	SetSizerAndFit(hboxMaster);
@@ -110,10 +106,22 @@ void HitboxTab::AddEntry(wxString name)
 
 void HitboxTab::RemoveEntry(wxString name)
 {
+	if (imagesBox->GetStringSelection() == name)
+	{
+		hitboxesBox->Clear();
+		canvasView->ClearCanvas();
+	}
+
 	for (unsigned int i = 0; i < imagesBox->GetCount(); i++)
 	{
-		imagesBox->Delete(i);
+		if (imagesBox->GetString(i) == name)
+		{
+			imagesBox->Delete(i);
+		}
 	}
+
+
+
 }
 
 void HitboxTab::RemoveHitbox()
@@ -321,6 +329,7 @@ nlohmann::json HitboxTab::generateJSON()
 		{
 			hurtboxJSONData.push_back(parent->getImagesContainer()->getHurtBox(imagesBox->GetStringSelection(), i)->getJSONInfo(getCurrentlySelectedImage(), PPU));
 		}
+		rtn["Name"] = imagesBox->GetStringSelection();
 		rtn["Hitboxes"] = hitboxJSONData;
 		rtn["Hurtboxes"] = hurtboxJSONData;
 		rtn["HitboxCounter"] = parent->getImagesContainer()->getHitboxCounter(imagesBox->GetStringSelection());

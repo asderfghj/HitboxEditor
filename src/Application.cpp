@@ -1,4 +1,6 @@
-#include "Headers.h"
+#include "Application.h"
+#include "Frame.h"
+#include <wx/wx.h>
 #include "icon/icon.xpm"
 
 bool Application::OnInit()

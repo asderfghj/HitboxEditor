@@ -1,4 +1,6 @@
-#include "Headers.h"
+#include <wx/wx.h>
+#include <wx/filename.h>
+#include "Image.h"
 
 Image::Image(wxString path)
 {
@@ -11,7 +13,6 @@ Image::Image(wxString path)
 		throw std::exception();
 	}
 
-	this->bitmap = wxBitmap(this->bitmap);
 	this->name = wxFileName::FileName(path).GetFullName();
 	//wxLogMessage(this->name);
 }

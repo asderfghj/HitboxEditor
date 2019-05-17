@@ -1,4 +1,7 @@
-#include "Headers.h"
+#include "ImageTab.h"
+#include "Frame.h"
+#include "ImagesContainer.h"
+#include "Image.h"
 
 ImageTab::ImageTab(Frame* parent, wxNotebook* guiParent) : wxPanel(guiParent, wxID_ANY)
 {

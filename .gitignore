@@ -2,6 +2,10 @@
 build
 build/
 /build/
+/doxygenoutput
+doxygenoutput
+doxygenoutput/
+/doxygenoutput/
 
 # Prerequisites
 *.d

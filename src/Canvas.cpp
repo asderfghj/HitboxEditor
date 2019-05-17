@@ -1,4 +1,10 @@
-#include "Headers.h"
+#include <wx/wx.h>
+#include <wx/dcbuffer.h>
+#include "Canvas.h"
+#include "HitboxTab.h"
+#include "CanvasView.h"
+#include "HitboxTab.h"
+#include "Hitbox.h"
 
 wxSize Canvas::ScrollingIncrement = wxSize(10, 10);
 
@@ -43,7 +49,6 @@ void Canvas::Init()
 	Connect(this->GetId(), wxEVT_RIGHT_UP, (wxObjectEventFunction)&Canvas::OnRightUp);
 	Connect(this->GetId(), wxEVT_MOTION, (wxObjectEventFunction)&Canvas::OnMotion);
 	Connect(this->GetId(), wxEVT_ERASE_BACKGROUND, (wxObjectEventFunction)&Canvas::OnEraseBackground);
-	//Connect(this->GetId(), wxEVT_SIZE, (wxObjectEventFunction)&Canvas::FixViewOffset);
 }
 
 
@@ -112,7 +117,6 @@ void Canvas::FixViewOffset()
 		wxRect displayRect = GetImageDisplayRect(pt);
 		wxSize offset(displayRect.GetPosition().x, displayRect.GetPosition().y);
 		m_View->SetViewOffset(offset);
-		//wxLogMessage((wxString::Format("View offset: (%i , %i)", offset.GetWidth(), offset.GetHeight())));
 	}
 }
 
@@ -183,13 +187,6 @@ void Canvas::OnLeftUp(wxMouseEvent& event)
 			ReleaseMouse();
 			Refresh();
 			tabParent->addHitbox(m_selection.GetLeft(), m_selection.GetTop(), ClientToImage(m_selection.GetTopLeft()).x, ClientToImage(m_selection.GetTopLeft()).y, m_selection.GetWidth(), m_selection.GetHeight(), m_View->GetViewOffset().x, m_View->GetViewOffset().y, false);
-			/*wxMessageBox(wxString::Format(
-				_("Selection rectangle\r\nScreen coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)\r\nLogical coordinates:\r\nPosition=(%i,%i);\r\nSize=(%i,%i)"),
-				m_selection.GetLeft(), m_selection.GetTop(),
-				m_selection.GetWidth(), m_selection.GetHeight(),
-				ClientToImage(m_selection.GetTopLeft()).x,
-				ClientToImage(m_selection.GetTopLeft()).y,
-				m_selection.GetWidth(), m_selection.GetHeight()));*/
 			m_TR = m_BL = wxPoint(0, 0);
 			m_selection.SetPosition(m_TR);
 			m_selection.SetSize(wxSize(0, 0));
@@ -304,7 +301,6 @@ void Canvas::OnScrollLineUp(wxScrollWinEvent& event)
 	int increment = (event.GetOrientation() == wxHORIZONTAL ? Canvas::ScrollingIncrement.GetWidth() : Canvas::ScrollingIncrement.GetHeight());
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) - increment);
 	FixViewOffset();
-	// wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -313,7 +309,6 @@ void Canvas::OnScrollLineDown(wxScrollWinEvent& event)
 	int increment = (event.GetOrientation() == wxHORIZONTAL ? Canvas::ScrollingIncrement.GetWidth() : Canvas::ScrollingIncrement.GetHeight());
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) + increment);
 	FixViewOffset();
-	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -321,7 +316,6 @@ void Canvas::OnScrollPageUp(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) - GetScrollThumb(event.GetOrientation()));
 	FixViewOffset();
-	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -329,7 +323,6 @@ void Canvas::OnScrollPageDown(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), GetScrollPos(event.GetOrientation()) + GetScrollThumb(event.GetOrientation()));
 	FixViewOffset();
-	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
@@ -337,14 +330,12 @@ void Canvas::OnScrollThumbTrack(wxScrollWinEvent& event)
 {
 	SetScrollPos(event.GetOrientation(), event.GetPosition());
 	FixViewOffset();
-	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 
 void Canvas::OnScrollThumbRelease(wxScrollWinEvent& event)
 {
 	FixViewOffset();
-	//wxScrolledWindow::HandleOnScroll(event);
 	Refresh();
 }
 

@@ -1,4 +1,6 @@
-#include "headers.h"
+#include "HitboxData.h"
+#include "Image.h"
+#include "Hitbox.h"
 
 HitboxData::HitboxData(std::shared_ptr<Image> _img)
 {

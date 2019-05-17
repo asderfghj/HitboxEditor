@@ -1,4 +1,7 @@
-#include "Headers.h"
+#include "ImagesContainer.h"
+#include "HitboxData.h"
+#include "Image.h"
+#include "Hitbox.h"
 
 void ImagesContainer::addImage(std::shared_ptr<Image> _image)
 {
@@ -115,6 +118,7 @@ int ImagesContainer::getHitboxCounter(wxString _imageName)
 			return files[i]->getHitboxCounter();
 		}
 	}
+	throw std::exception();
 }
 
 void ImagesContainer::setHitboxCounter(wxString _imageName, int _counter)
@@ -126,6 +130,7 @@ void ImagesContainer::setHitboxCounter(wxString _imageName, int _counter)
 			files[i]->setHitboxCounter(_counter);
 		}
 	}
+	throw std::exception();
 }
 
 
@@ -214,6 +219,8 @@ int ImagesContainer::getHurtboxCounter(wxString _imageName)
 			return files[i]->getHurtboxCounter();
 		}
 	}
+
+	throw std::exception();
 }
 
 void ImagesContainer::setHurtboxCounter(wxString _imageName, int _counter)

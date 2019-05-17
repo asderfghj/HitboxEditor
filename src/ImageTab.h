@@ -1,6 +1,7 @@
-#ifndef IMAGETAB_H_
-#define IMAGETAB_H_
-#include "Headers.h"
+#include <wx/wx.h>
+#include <wx/notebook.h>
+struct Image;
+class Frame;
 
 class ImageTab : public wxPanel
 {
@@ -22,5 +23,3 @@ public:
 	Image* getImage(wxString name);
 
 };
-
-#endif

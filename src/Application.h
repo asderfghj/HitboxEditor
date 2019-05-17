@@ -1,11 +1,6 @@
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
-
-#include "Headers.h"
-
+#include <wx/wx.h>
 class Application : public wxApp
 {
 	virtual bool OnInit();
 };
 
-#endif

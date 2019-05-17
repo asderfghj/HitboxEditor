@@ -1,9 +1,12 @@
-#ifndef IMAGESCONTAINER_H_
-#define IMAGESCONTAINER_H_
-#include "Headers.h"
+#include <vector>
+#include <memory>
+#include <wx/wx.h>
+#include <nlohmann/json.hpp>
+
 
 class HitboxData;
 class hitbox;
+struct Image;
 
 class ImagesContainer
 {
@@ -32,11 +35,6 @@ public:
 	void setHurtboxCounter(wxString _imageName, int _counter);
 	bool checkForImage(wxString _path);
 	void DeselectAll();
-
+	
 };
 
-
-
-
-
-#endif // !IMAGESCONTAINER_H_

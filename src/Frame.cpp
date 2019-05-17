@@ -1,4 +1,7 @@
-#include "Headers.h"
+#include "Frame.h"
+#include "ImageTab.h"
+#include "HitboxTab.h"
+#include "ImagesContainer.h"
 
 Frame::Frame() : wxFrame(NULL, wxID_ANY, _("Hitbox Editor"), wxDefaultPosition, wxSize(1600, 1200))
 {
